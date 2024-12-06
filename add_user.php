@@ -5,11 +5,10 @@ include 'db_connection.php';
 // Check if user is admin
 function isAdmin($conn) {
     $user_id = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT role FROM users WHERE id = ? AND role = 'admin'");
-    $stmt->bind_param("i", $user_id);
+    $stmt = $conn->prepare("SELECT role FROM users WHERE id = :user_id AND role = 'admin'");
+    $stmt->bindParam(':user_id', $user_id);
     $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->num_rows > 0;
+    return $stmt->rowCount() > 0;
 }
 
 // Check authentication and admin status
@@ -41,23 +40,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_user'])) {
         $error_message = "Invalid email format.";
     } else {
         // Check if username already exists
-        $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
+        $stmt = $conn->prepare("SELECT id FROM users WHERE username = :username");
+        $stmt->bindParam(':username', $username);
         $stmt->execute();
-        if ($stmt->get_result()->num_rows > 0) {
+        if ($stmt->rowCount() > 0) {
             $error_message = "Username already exists.";
         } else {
             // Check if email already exists
-            $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
-            $stmt->bind_param("s", $email);
+            $stmt = $conn->prepare("SELECT id FROM users WHERE email = :email");
+            $stmt->bindParam(':email', $email);
             $stmt->execute();
-            if ($stmt->get_result()->num_rows > 0) {
+            if ($stmt->rowCount() > 0) {
                 $error_message = "Email already exists.";
             } else {
                 // Create new user
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $conn->prepare("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)");
-                $stmt->bind_param("ssss", $username, $email, $hashed_password, $role);
+                $stmt = $conn->prepare("INSERT INTO users (username, email, password, role) VALUES (:username, :email, :password, :role)");
+                $stmt->bindParam(':username', $username);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':password', $hashed_password);
+                $stmt->bindParam(':role', $role);
                 
                 if ($stmt->execute()) {
                     $success_message = "User created successfully!";

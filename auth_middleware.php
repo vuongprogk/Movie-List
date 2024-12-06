@@ -14,11 +14,10 @@ function getCurrentUser($conn) {
         return null;
     }
 
-    $stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
-    $stmt->bind_param("i", $_SESSION['user_id']);
+    $stmt = $conn->prepare("SELECT * FROM users WHERE id = :id");
+    $stmt->bindParam(":id", $_SESSION['user_id'], PDO::PARAM_INT);
     $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->fetch_assoc();
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 function logout() {

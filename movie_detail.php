@@ -9,29 +9,28 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 }
 function isAdmin($conn) {
     $user_id = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT role FROM users WHERE id = ? AND role = 'admin'");
-    $stmt->bind_param("i", $user_id);
+    $stmt = $conn->prepare("SELECT role FROM users WHERE id = :id AND role = 'admin'");
+    $stmt->bindParam(':id', $user_id, PDO::PARAM_INT);
     $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->num_rows > 0;
+    return $stmt->rowCount() > 0;
 }
 checkAuthentication();
 $movieId = intval($_GET['id']);
 
 // Fetch specific movie details
-$movieQuery = "SELECT * FROM movies WHERE id = ?";
+$movieQuery = "SELECT * FROM movies WHERE id = :id";
 $stmt = $conn->prepare($movieQuery);
-$stmt->bind_param("i", $movieId);
+$stmt->bindParam(':id', $movieId, PDO::PARAM_INT);
 $stmt->execute();
-$movieResult = $stmt->get_result();
+$movieResult = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // Check if movie exists
-if ($movieResult->num_rows === 0) {
+if (!$movieResult) {
     header('Location: all_movies.php');
     exit();
 }
 
-$movie = $movieResult->fetch_assoc();
+$movie = $movieResult;
 $isLoggedIn = isset($_SESSION['user_id']);
 ?>
 

@@ -7,10 +7,9 @@ $isLoggedIn = isset($_SESSION['user_id']);
 function isAdmin($conn) {
     $user_id = $_SESSION['user_id'];
     $stmt = $conn->prepare("SELECT role FROM users WHERE id = ? AND role = 'admin'");
-    $stmt->bind_param("i", $user_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->num_rows > 0;
+    $stmt->execute([$user_id]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result !== false;
 }
 checkAuthentication();
 
@@ -54,7 +53,7 @@ $popularResult = $conn->query($popularQuery);
           <div class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">Most Popular Movies</h1>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <?php while($movie = $popularResult->fetch_assoc()): ?>
+            <?php while($movie = $popularResult->fetch(PDO::FETCH_ASSOC)): ?>
                 <div class="bg-white shadow-lg rounded-lg overflow-hidden transform transition duration-300 hover:scale-105">
                     <img src="<?php echo $movie['poster_url']; ?>" 
                          alt="<?php echo $movie['title']; ?>" 

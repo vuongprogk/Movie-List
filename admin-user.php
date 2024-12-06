@@ -5,11 +5,10 @@ include 'db_connection.php';
 // Check if user is admin
 function isAdmin($conn) {
     $user_id = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT role FROM users WHERE id = ? AND role = 'admin'");
-    $stmt->bind_param("i", $user_id);
+    $stmt = $conn->prepare("SELECT role FROM users WHERE id = :user_id AND role = 'admin'");
+    $stmt->bindParam(':user_id', $user_id);
     $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->num_rows > 0;
+    return $stmt->rowCount() > 0;
 }
 
 // Check authentication and admin status
@@ -22,8 +21,8 @@ if (!isAdmin($conn)) {
 // Handle user deletion
 if (isset($_GET['delete_user'])) {
     $user_id = $_GET['delete_user'];
-    $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
+    $stmt = $conn->prepare("DELETE FROM users WHERE id = :user_id");
+    $stmt->bindParam(':user_id', $user_id);
     $stmt->execute();
     header("Location: admin-user.php");
     exit();
@@ -33,8 +32,9 @@ if (isset($_GET['delete_user'])) {
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_user_role'])) {
     $user_id = $_POST['user_id'];
     $new_role = $_POST['role'];
-    $stmt = $conn->prepare("UPDATE users SET role = ? WHERE id = ?");
-    $stmt->bind_param("si", $new_role, $user_id);
+    $stmt = $conn->prepare("UPDATE users SET role = :new_role WHERE id = :user_id");
+    $stmt->bindParam(':new_role', $new_role);
+    $stmt->bindParam(':user_id', $user_id);
     $stmt->execute();
     header("Location: admin-user.php");
     exit();

@@ -5,11 +5,10 @@ include 'db_connection.php';
 $isLoggedIn = isset($_SESSION['user_id']);
 function isAdmin($conn) {
     $user_id = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT role FROM users WHERE id = ? AND role = 'admin'");
-    $stmt->bind_param("i", $user_id);
+    $stmt = $conn->prepare("SELECT role FROM users WHERE id = :user_id AND role = 'admin'");
+    $stmt->bindParam(':user_id', $user_id);
     $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->num_rows > 0;
+    return $stmt->rowCount() > 0;
 }
 checkAuthentication();
 ?>
@@ -49,7 +48,7 @@ checkAuthentication();
             <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">About the Movie Enthusiast</h1>
             
             <div class="flex flex-col items-center mb-8">
-                <img src="your_photo.jpg" 
+                <img src="59494651.jpg" 
                      alt="Your Photo" 
                      class="w-48 h-48 rounded-full object-cover border-4 border-gray-300">
             </div>
@@ -63,13 +62,13 @@ checkAuthentication();
                 <h2 class="text-2xl font-semibold mb-4 text-gray-700">Movie Preferences</h2>
                 <ul class="list-disc list-inside text-gray-600 mb-6">
                     <li>Favorite Genre: Science Fiction</li>
-                    <li>Favorite Director: Christopher Nolan</li>
-                    <li>Most Watched Movie: Inception</li>
+                    <li>Favorite Director: Tom Hollan</li>
+                    <li>Most Watched Movie: Avengers</li>
                 </ul>
                 
                 <h2 class="text-2xl font-semibold mb-4 text-gray-700">Contact Information</h2>
-                <p class="text-gray-600">Email: movie.enthusiast@example.com</p>
-                <p class="text-gray-600">GitHub: github.com/movie-lover</p>
+                <p class="text-gray-600">Email: dh52112120@student.stu.edu.vn</p>
+                <p class="text-gray-600">GitHub: https://github.com/vuongprogk/Movie-List</p>
             </div>
         </div>
     </div>

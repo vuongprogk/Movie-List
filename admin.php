@@ -5,11 +5,10 @@ include 'db_connection.php';
 // Check if user is admin
 function isAdmin($conn) {
     $user_id = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT role FROM users WHERE id = ? AND role = 'admin'");
-    $stmt->bind_param("i", $user_id);
+    $stmt = $conn->prepare("SELECT role FROM users WHERE id = :user_id AND role = 'admin'");
+    $stmt->bindParam(':user_id', $user_id);
     $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->num_rows > 0;
+    return $stmt->rowCount() > 0;
 }
 
 // Check authentication and admin status
@@ -22,8 +21,8 @@ if (!isAdmin($conn)) {
 // Handle movie deletion
 if (isset($_GET['delete'])) {
     $movie_id = $_GET['delete'];
-    $stmt = $conn->prepare("DELETE FROM movies WHERE id = ?");
-    $stmt->bind_param("i", $movie_id);
+    $stmt = $conn->prepare("DELETE FROM movies WHERE id = :movie_id");
+    $stmt->bindParam(':movie_id', $movie_id);
     $stmt->execute();
 }
 
@@ -79,7 +78,7 @@ $moviesResult = $conn->query($moviesQuery);
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while($movie = $moviesResult->fetch_assoc()): ?>
+                    <?php while($movie = $moviesResult->fetch(PDO::FETCH_ASSOC)): ?>
                         <tr class="border-b">
                             <td class="p-2"><?php echo htmlspecialchars($movie['title']); ?></td>
                             <td class="p-2"><?php echo htmlspecialchars($movie['genre']); ?></td>

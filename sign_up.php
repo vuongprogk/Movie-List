@@ -8,15 +8,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
     $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $username, $email, $password);
+    $stmt->execute([$username, $email, $password]);
 
-    if ($stmt->execute()) {
-        $_SESSION['user_id'] = $stmt->insert_id;
+    if ($stmt) {
+        $_SESSION['user_id'] = $conn->lastInsertId();
         header("Location: popular_movies.php");
     } else {
         $error = "Registration failed. Username or email might already exist.";
     }
-    $stmt->close();
 }
 ?>
 

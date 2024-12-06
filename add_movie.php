@@ -5,11 +5,10 @@ include 'db_connection.php';
 // Check if user is admin
 function isAdmin($conn) {
     $user_id = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT role FROM users WHERE id = ? AND role = 'admin'");
-    $stmt->bind_param("i", $user_id);
+    $stmt = $conn->prepare("SELECT role FROM users WHERE id = :user_id AND role = 'admin'");
+    $stmt->bindParam(':user_id', $user_id);
     $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->num_rows > 0;
+    return $stmt->rowCount() > 0;
 }
 
 // Check authentication and admin status
@@ -30,8 +29,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_movie'])) {
     $trailer_url = $_POST['trailer_url'];
     $poster_url = $_POST['poster_url'];
 
-    $stmt = $conn->prepare("INSERT INTO movies (title, description, genre, release_year, rating, popularity, trailer_url, poster_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssiidss", $title, $description, $genre, $release_year, $rating, $popularity, $trailer_url, $poster_url);
+    $stmt = $conn->prepare("INSERT INTO movies (title, description, genre, release_year, rating, popularity, trailer_url, poster_url) VALUES (:title, :description, :genre, :release_year, :rating, :popularity, :trailer_url, :poster_url)");
+    $stmt->bindParam(':title', $title);
+    $stmt->bindParam(':description', $description);
+    $stmt->bindParam(':genre', $genre);
+    $stmt->bindParam(':release_year', $release_year);
+    $stmt->bindParam(':rating', $rating);
+    $stmt->bindParam(':popularity', $popularity);
+    $stmt->bindParam(':trailer_url', $trailer_url);
+    $stmt->bindParam(':poster_url', $poster_url);
     
     if ($stmt->execute()) {
         $success_message = "Movie added successfully!";

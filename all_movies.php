@@ -3,11 +3,10 @@ include 'auth_middleware.php';
 include 'db_connection.php';
 function isAdmin($conn) {
     $user_id = $_SESSION['user_id'];
-    $stmt = $conn->prepare("SELECT role FROM users WHERE id = ? AND role = 'admin'");
-    $stmt->bind_param("i", $user_id);
+    $stmt = $conn->prepare("SELECT role FROM users WHERE id = :id AND role = 'admin'");
+    $stmt->bindParam(':id', $user_id, PDO::PARAM_INT);
     $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->num_rows > 0;
+    return $stmt->rowCount() > 0;
 }
 checkAuthentication();
 $isLoggedIn = isset($_SESSION['user_id']);
@@ -52,7 +51,7 @@ $allMoviesResult = $conn->query($allMoviesQuery);
            <div class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold text-center mb-8 text-gray-800">All Movies in Database</h1>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <?php while($movie = $allMoviesResult->fetch_assoc()): ?>
+            <?php while($movie = $allMoviesResult->fetch(PDO::FETCH_ASSOC)): ?>
                 <div class="bg-white shadow-lg rounded-lg overflow-hidden transform transition duration-300 hover:scale-105">
                     <img src="<?php echo $movie['poster_url']; ?>" 
                          alt="<?php echo $movie['title']; ?>" 
