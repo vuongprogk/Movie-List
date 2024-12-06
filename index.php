@@ -1,5 +1,5 @@
 <?php
-include 'auth_middleware.php';
+include 'includes/functions.php';
 
 
 // Check if user is not logged in

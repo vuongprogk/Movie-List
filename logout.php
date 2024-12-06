@@ -1,4 +1,4 @@
 <?php
-include 'auth_middleware.php';
+include 'includes/functions.php';
 logout();
 ?>
