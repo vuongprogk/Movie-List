@@ -10,18 +10,11 @@ $username = getUsername($conn);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Most Popular Movies</title>
+    <title>Tran Duc Vuong - DH52112120 </title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (localStorage.getItem('dark-mode') === 'true') {
-                document.body.classList.add('dark');
-            }
-        });
-    </script>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900">
-  <nav class="bg-gray-800 p-4 text-white">
+<body class="bg-gray-100">
+     <nav class="bg-gray-800 p-4 text-white">
         <div class="container mx-auto flex flex-wrap justify-between items-center">
             <div class="flex items-center">
                 <button id="nav-toggle" class="lg:hidden block text-white focus:outline-none">
@@ -40,8 +33,7 @@ $username = getUsername($conn);
                         <a href="admin-user.php" class="block mt-4 lg:inline-block lg:mt-0 hover:text-gray-300 mr-4">Manage Users</a>
                 <?php endif; ?>
                 </div>
-                <div class="flex items-center">
-                    <button id="dark-mode-toggle" class="block mt-4 lg:inline-block lg:mt-0 bg-gray-700 px-3 py-1 rounded hover:bg-gray-600 mr-4">Toggle Dark Mode</button>
+                    <div>
                     <span class="block mt-4 lg:inline-block lg:mt-0 mr-4">Welcome, <?php echo htmlspecialchars($username); ?></span>
                     <a href="logout.php" class="block mt-4 lg:inline-block lg:mt-0 bg-red-500 px-3 py-1 rounded hover:bg-red-600">Logout</a>
                 </div>
@@ -55,17 +47,6 @@ $username = getUsername($conn);
                 navContent.classList.remove('hidden');
             } else {
                 navContent.classList.add('hidden');
-            }
-        };
-
-        document.getElementById('dark-mode-toggle').onclick = function() {
-            var body = document.body;
-            if (body.classList.contains('dark')) {
-                body.classList.remove('dark');
-                localStorage.setItem('dark-mode', 'false');
-            } else {
-                body.classList.add('dark');
-                localStorage.setItem('dark-mode', 'true');
             }
         };
     </script>
