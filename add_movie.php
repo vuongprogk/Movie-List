@@ -17,6 +17,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_movie'])) {
     $trailer_url = $_POST['trailer_url'];
     $poster_url = $_POST['poster_url'];
 
+    $poster_url = uploadPoster($_FILES['poster']);
+
     $stmt = $conn->prepare("INSERT INTO movies (title, description, genre, release_year, rating, popularity, trailer_url, poster_url) VALUES (:title, :description, :genre, :release_year, :rating, :popularity, :trailer_url, :poster_url)");
     $stmt->bindParam(':title', $title);
     $stmt->bindParam(':description', $description);
@@ -56,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_movie'])) {
         <?php endif; ?>
 
         <div class="bg-white shadow-md rounded-lg p-6">
-            <form method="POST" class="grid grid-cols-2 gap-4">
+            <form method="POST" enctype="multipart/form-data" class="grid grid-cols-2 gap-4">
                 <div class="col-span-2 grid grid-cols-2 gap-4">
                     <input type="text" name="title" placeholder="Movie Title" required 
                         class="border p-2 rounded">
@@ -73,8 +75,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_movie'])) {
                 </div>
                 <textarea name="description" placeholder="Movie Description" 
                     class="border p-2 rounded col-span-2" rows="3"></textarea>
+                 <!-- Existing Poster URL Input -->
                 <input type="text" name="poster_url" placeholder="Poster URL" 
-                    class="border p-2 rounded col-span-2">
+                    value="<?php echo htmlspecialchars($movie['poster_url'] ?? ''); ?>" 
+                    class="border p-2 rounded col-span-1 sm:col-span-2">
+                
+                <!-- New Poster File Upload -->
+                <div class="col-span-1 sm:col-span-2">
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="poster">
+                        Upload New Poster Image (Optional)
+                    </label>
+                    <input type="file" name="poster" accept="image/*" 
+                        class="border p-2 rounded w-full file:mr-4 file:rounded file:border-0 file:bg-gray-200 file:px-4 file:py-2">
+                </div>
                 <div class="col-span-2 flex justify-end space-x-4">
                     <a href="admin.php" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
                         Cancel
