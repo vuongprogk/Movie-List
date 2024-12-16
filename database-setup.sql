@@ -31,3 +31,7 @@ CREATE TABLE users (
 
 -- Add a column to track user roles (optional)
 ALTER TABLE users ADD COLUMN role ENUM('user', 'admin') DEFAULT 'user';
+
+INSERT INTO `users` (`id`, `username`, `email`, `password`, `created_at`, `role`) VALUES
+(1, 'admin', 'admin@gmail.com', '$2y$10$2dBQHljXY8GezaweqGQwduhssiELHTWbz1D3HNqZvoscpG.rNTVCK', '2024-11-20 02:16:56', 'admin'),
+(11, 'user', 'user@gmail.com', '$2y$10$n4zi2vjDL4AiBX82yAny..xsUjHp.9r0yQWg7SuNpIN4osuiTfxcm', '2024-12-16 13:06:46', 'user');
